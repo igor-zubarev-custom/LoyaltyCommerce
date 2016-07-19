@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pipelinemanager PUBLIC "-//Art Technology Group, Inc.//DTD Dynamo Pipeline Manager//EN" "http://www.atg.com/dtds/pipelinemanager/pipelinemanager_1.0.dtd">
+<pipelinemanager>
+  <pipelinechain headlink="createGiftCertificateInfo" name="giftCertificateProcessorChain" transaction="TX_REQUIRED" xml-combine="replace">
+    <pipelinelink name="createGiftCertificateInfo" transaction="TX_MANDATORY">
+      <processor jndi="/atg/commerce/payment/processor/CreateGiftCertificateInfo"/>
+      <transition link="processGiftCertificate" returnvalue="1"/>
+    </pipelinelink>
+    <pipelinelink name="processGiftCertificate" transaction="TX_MANDATORY">
+      <processor jndi="/atg/commerce/payment/processor/ProcessGiftCertificate"/>
+    </pipelinelink>
+  </pipelinechain>
+  <pipelinechain headlink="createCreditCardInfo" name="creditCardProcessorChain" transaction="TX_REQUIRED" xml-combine="replace">
+    <pipelinelink name="createCreditCardInfo" transaction="TX_MANDATORY">
+      <processor jndi="/atg/commerce/payment/processor/CreateCreditCardInfo"/>
+      <transition link="processCreditCard" returnvalue="1"/>
+    </pipelinelink>
+    <pipelinelink name="processCreditCard" transaction="TX_MANDATORY">
+      <processor jndi="/atg/commerce/payment/processor/ProcessCreditCard"/>
+      <transition link="creditLoyaltyPoints" returnvalue="1"/>
+    </pipelinelink>
+    <pipelinelink name="creditLoyaltyPoints" transaction="TX_MANDATORY">
+      <processor jndi="/loyalty/commerce/LoyaltyPointsForPaymentProcessor"/>      
+    </pipelinelink>
+  </pipelinechain>
+  <pipelinechain headlink="createStoreCreditInfo" name="storeCreditProcessorChain" transaction="TX_REQUIRED" xml-combine="replace">
+    <pipelinelink name="createStoreCreditInfo" transaction="TX_MANDATORY">
+      <processor jndi="/atg/commerce/payment/processor/CreateStoreCreditInfo"/>
+      <transition link="processStoreCredit" returnvalue="1"/>
+    </pipelinelink>
+    <pipelinelink name="processStoreCredit" transaction="TX_MANDATORY">
+      <processor jndi="/atg/commerce/payment/processor/ProcessStoreCredit"/>
+    </pipelinelink>
+  </pipelinechain>
+  <pipelinechain headlink="createLoyaltypointsInfo" name="loyaltyPointsProcessorChain" transaction="TX_REQUIRED" xml-combine="replace">
+    <pipelinelink name="createLoyaltypointsInfo" transaction="TX_MANDATORY">
+      <processor jndi="/loyalty/commerce/ProcCreateLoyaltyPointsInfo"/>
+      <transition link="processloyaltyPointsAythorize" returnvalue="1"/>
+    </pipelinelink>
+    <pipelinelink name="processloyaltyPointsAythorize" transaction="TX_MANDATORY">
+      <processor jndi="/loyalty/commerce/ProcProcessLoyaltyPoints"/>
+      <transition link="processloyaltyPointsDebit" returnvalue="1"/>
+    </pipelinelink>
+    <pipelinelink name="processloyaltyPointsDebit" transaction="TX_MANDATORY">
+      <processor jndi="/loyalty/commerce/ProcProcessLoyaltyPoints"/>     
+    </pipelinelink>   
+  </pipelinechain>
+</pipelinemanager>
